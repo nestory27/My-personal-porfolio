@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flet Portfolio - Working Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+
+        /* Views Grid */
+        .views-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Card Styles */
+        .view-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .view-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        /* Component Styles */
+        .counter-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .counter-number {
+            font-size: 4em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .info-card {
+            background: #f3f4f6;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 15px;
+            margin: 15px 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Slider Component */
+        .slider-container {
+            margin: 20px 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: #d1d5db;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Dropdown */
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .status-active {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-inactive {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Todo List */
+        .todo-input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1em;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 10px 0;
+            background: #f9fafb;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .todo-item:hover {
+            background: #f3f4f6;
+        }
+
+        .todo-text {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .todo-text.completed {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .views-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h2>Loading Flet Portfolio</h2>
+            <p>Initializing your experience...</p>
+        </div>
+    </div>
+
+    <div class="container" style="display: none;" id="mainContent">
+        <div class="header">
+            <h1>🎨 Flet Portfolio</h1>
+            <p>A modern, interactive web application built with Python Flet concepts</p>
+            <div class="badge">✨ Fully Functional Demo ✨</div>
+        </div>
+
+        <div class="views-grid">
+            <!-- View 1: Dashboard -->
+            <div class="view-card">
+                <div class="card-header">
+                    📊 Dashboard View
+                </div>
+                <div class="card-content">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3em;">🎯</div>
+                        <h3 style="margin: 15px 0; color: #667eea;">Interactive Counter</h3>
+                    </div>
+                    
+                    <div class="counter-display">
+                        <div class="counter-number" id="counterValue">0</div>
+                        <div class="button-group">
+                            <button class="btn btn-danger" onclick="decrementCounter()">− Decrease</button>
+                            <button class="btn btn-primary" onclick="incrementCounter()">+ Increase</button>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div style="font-size: 2em; margin-bottom: 10px;">ℹ️</div>
+                        <h4>Information</h4>
+                        <p style="margin-top: 10px; color: #666;">This is a fully functional web demo showcasing interactive components similar to Flet's capabilities.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>📈 Statistics</h4>
+                        <p style="margin-top: 10px;" id="statsText">Clicks: 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 2: Settings -->
+            <div class="view-card">
+                <div class="card-header">
+                    ⚙️ Settings Panel
+                </div>
+                <div class="card-content">
+                    <div class="toggle-switch">
+                        <span>🌙 Dark Mode Preview</span>
+                        <label class="switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="slider-container">
+                        <label>📊 Volume Control</label>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                        <div class="slider-value" id="volumeValue">Value: 50%</div>
+                    </div>
+
+                    <div style="margin: 20px 0;">
+                        <label>🔽 Select Option</label>
+                        <select id="dropdownSelect">
+                            <option value="Option 1">Option 1</option>
+                            <option value="Option 2">Option 2</option>
+                            <option value="Option 3">Option 3</option>
+                        </select>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div id="statusBadge" class="status-badge status-active">● Active</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 3: Todo List -->
+            <div class="view-card">
+                <div class="card-header">
+                    ✅ Todo List Manager
+                </div>
+                <div class="card-content">
+                    <div class="todo-input-group">
+                        <input type="text" id="todoInput" placeholder="Enter a new task..." onkeypress="handleEnter(event)">
+                        <button class="btn btn-primary" onclick="addTodo()">Add</button>
+                    </div>
+                    <div id="todoList"></div>
+                </div>
+            </div>
+
+            <!-- View 4: Color Picker -->
+            <div class="view-card">
+                <div class="card-header">
+                    🎨 Color Explorer
+                </div>
+                <div class="card-content">
+                    <div style="text-align: center;">
+                        <div style="width: 100%; height: 150px; border-radius: 15px; margin-bottom: 20px; transition: all 0.3s ease;" id="colorBox"></div>
+                        <input type="color" id="colorPicker" value="#667eea" style="width: 100%; height: 50px; border: none; cursor: pointer;">
+                        <p style="margin-top: 15px; color: #666;" id="colorCode">#667eea</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Loading animation
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.classList.add('fade-out');
+                setTimeout(function() {
+                    loadingOverlay.style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                }, 500);
+            }, 1500);
+        });
+
+        // Counter logic
+        let counter = 0;
+        let totalClicks = 0;
+
+        function incrementCounter() {
+            counter++;
+            totalClicks++;
+            updateCounter();
+        }
+
+        function decrementCounter() {
+            counter--;
+            totalClicks++;
+            updateCounter();
+        }
+
+        function updateCounter() {
+            document.getElementById('counterValue').textContent = counter;
+            document.getElementById('statsText').textContent = `Total clicks: ${totalClicks} | Current value: ${counter}`;
+            
+            // Add animation effect
+            const counterElement = document.getElementById('counterValue');
+            counterElement.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                counterElement.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('change', function(e) {
+            if(e.target.checked) {
+                document.body.style.background = '#1a1a2e';
+                document.querySelectorAll('.view-card').forEach(card => {
+                    card.style.background = '#16213e';
+                    card.style.color = '#fff';
+                });
+                document.querySelectorAll('.card-content').forEach(content => {
+                    content.style.color = '#fff';
+                });
+                document.querySelectorAll('.info-card').forEach(card => {
+                    card.style.background = '#0f3460';
+                    card.style.color = '#fff';
+                });
+                document.querySelectorAll('.toggle-switch').forEach(sw => {
+                    sw.style.background = '#0f3460';
+                });
+            } else {
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                document.querySelectorAll('.view-card').forEach(card => {
+                    card.style.background = 'white';
+                    card.style.color = '#333';
+                });
+                document.querySelectorAll('.info-card').forEach(card => {
+                    card.style.background = '#f3f4f6';
+                    card.style.color = '#333';
+                });
+                document.querySelectorAll('.toggle-switch').forEach(sw => {
+                    sw.style.background = '#f3f4f6';
+                });
+            }
+        });
+
+        // Volume slider
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        
+        volumeSlider.addEventListener('input', function(e) {
+            volumeValue.textContent = `Value: ${e.target.value}%`;
+        });
+
+        // Dropdown
+        const dropdown = document.getElementById('dropdownSelect');
+        const statusBadge = document.getElementById('statusBadge');
+        
+        dropdown.addEventListener('change', function(e) {
+            statusBadge.textContent = `● ${e.target.value}`;
+            if(e.target.value === 'Option 1') {
+                statusBadge.className = 'status-badge status-active';
+            } else if(e.target.value === 'Option 2') {
+                statusBadge.className = 'status-badge status-active';
+                statusBadge.style.background = '#f59e0b';
+            } else {
+                statusBadge.className = 'status-badge status-active';
+                statusBadge.style.background = '#8b5cf6';
+            }
+        });
+
+        // Todo list
+        let todos = [];
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            if(text) {
+                todos.push({ text: text, completed: false });
+                input.value = '';
+                renderTodos();
+            }
+        }
+
+        function handleEnter(event) {
+            if(event.key === 'Enter') {
+                addTodo();
+            }
+        }
+
+        function toggleTodo(index) {
+            todos[index].completed = !todos[index].completed;
+            renderTodos();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            renderTodos();
+        }
+
+        function renderTodos() {
+            const todoList = document.getElementById('todoList');
+            if(todos.length === 0) {
+                todoList.innerHTML = '<p style="text-align: center; color: #999;">No tasks yet. Add one above!</p>';
+                return;
+            }
+            
+            todoList.innerHTML = todos.map((todo, index) => `
+                <div class="todo-item">
+                    <div class="todo-text ${todo.completed ? 'completed' : ''}" onclick="toggleTodo(${index})">
+                        ${todo.text}
+                    </div>
+                    <button class="delete-btn" onclick="deleteTodo(${index})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        // Color picker
+        const colorPicker = document.getElementById('colorPicker');
+        const colorBox = document.getElementById('colorBox');
+        const colorCode = document.getElementById('colorCode');
+        
+        colorPicker.addEventListener('input', function(e) {
+            const color = e.target.value;
+            colorBox.style.background = color;
+            colorCode.textContent = color;
+            colorCode.style.color = color;
+        });
+        
+        // Initialize color box
+        colorBox.style.background = '#667eea';
+        
+        // Initialize todo list
+        renderTodos();
+
+        // Add some initial todos as examples
+        setTimeout(() => {
+            if(todos.length === 0) {
+                todos.push({ text: 'Welcome to your todo list!', completed: false });
+                todos.push({ text: 'Click to mark as complete', completed: false });
+                todos.push({ text: 'Add your own tasks', completed: false });
+                renderTodos();
+            }
+        }, 500);
+    </script>
+</body>
+</html>
